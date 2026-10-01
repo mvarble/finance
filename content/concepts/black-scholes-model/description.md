@@ -1,0 +1,1 @@
+The Black-Scholes model prices European options by modeling the underlying asset as a geometric Brownian motion and deriving a no-arbitrage replication argument, yielding a closed-form formula for call and put prices.

@@ -1,0 +1,1 @@
+An index of financial concepts, from the mechanics of market making and options pricing to the ways retail brokerages earn revenue. Each concept is explained on its own terms and linked to the ideas it depends on, so the site can be read in any order or followed along its dependency map.

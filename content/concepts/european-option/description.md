@@ -1,0 +1,1 @@
+A European option is a contract granting the right to buy (call) or sell (put) an asset at a fixed strike price, exercisable only at expiration. Its simple payoff structure admits closed-form pricing via the Black-Scholes model.

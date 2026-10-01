@@ -1,0 +1,1 @@
+The Greeks — delta, gamma, vega, and theta — are partial derivatives of an option's price that measure its sensitivity to the stock price, volatility, and time. They are the primary tools for hedging and managing option positions.

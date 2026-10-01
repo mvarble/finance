@@ -1,0 +1,1 @@
+The volatility surface maps implied volatility across strike prices and expirations, revealing how real markets depart from the Black-Scholes assumption of constant volatility through smiles, skews, and term structure.
