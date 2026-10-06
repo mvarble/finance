@@ -18,5 +18,5 @@ export default defineConfig({
     },
 
     // How the map lays itself out.
-    // graph: { charge: -900, linkDistance: 80, gravity: 0.02 },
+    graph: { charge: -2000, linkDistance: 200, gravity: 0.02 },
 });

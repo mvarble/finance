@@ -8,7 +8,8 @@
         "format": "prettier --write ."
     },
     "dependencies": {
-        "@mvarble/mesearch": "^0.2.1"
+        "@mvarble/mesearch": "^0.2.3",
+        "plotly.js": "^4.1.1"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
