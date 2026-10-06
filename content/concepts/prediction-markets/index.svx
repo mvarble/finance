@@ -1,7 +1,7 @@
 ---
 title: Prediction markets and sportsbooks
 created: 2026-09-30
-updated: 2026-10-05
+updated: 2026-10-06
 depends_on: [adverse-selection]
 ---
 
@@ -11,7 +11,7 @@ depends_on: [adverse-selection]
 
 Prediction markets are financial markets where participants trade contracts whose payoffs depend on the outcome of future events. These events can include elections, economic data releases, sporting events, geopolitical developments, or any other uncertain future occurrence. Contracts are priced according to the market's collective estimate of the probability of each outcome, and traders buy or sell according to whether they believe that estimate is too low or too high. Sportsbooks sell bets on sporting events at odds they set themselves, and their odds embody the same idea in an older form.
 
-This document builds on [adverse selection](../adverse-selection/), which explains why the spread on a traded contract depends on how much its buyers and sellers know.
+This document builds on [market making and adverse selection](../adverse-selection/), which explains why the spread on a traded contract depends on how much its buyers and sellers know.
 
 # Event contracts
 

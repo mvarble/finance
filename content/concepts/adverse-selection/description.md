@@ -1,1 +1,1 @@
-The risk that a counterparty knows more about a security's future than the firm quoting it, and the informational asymmetry that justifies the bid-ask spread.
+The business of quoting a bid and an ask and earning the spread between them, the risk that a counterparty knows more than the firm quoting, and the payment for retail order flow that follows from it.

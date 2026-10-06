@@ -1,1 +1,1 @@
-The difference between the interest a bank earns on its assets and the interest it pays on its liabilities, as a share of average earning assets.
+The difference between the interest a bank earns on its assets and the interest it pays on its liabilities, as a share of average earning assets. It also explains basis points, the unit margins are quoted in, and brokerage cash balance revenue, the same spread earned on customers' idle cash.

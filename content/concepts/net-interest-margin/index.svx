@@ -1,8 +1,7 @@
 ---
 title: Net interest margin
 created: 2026-09-30
-updated: 2026-10-05
-depends_on: [basis-points]
+updated: 2026-10-06
 ---
 
 <script>
@@ -15,7 +14,17 @@ $$
 	\mathrm{NIM} = \frac{\text{interest income} - \text{interest expense}}{\text{average earning assets}}.
 $$
 
-It is one of the most important indicators of a bank's profitability and is reported quarterly in earnings statements. A rising NIM generally signals expanding profits, and a falling NIM signals margin compression. Margins of this kind are small numbers and are usually quoted in [basis points](../basis-points/), hundredths of a percentage point.
+It is one of the most important indicators of a bank's profitability and is reported quarterly in earnings statements. A rising NIM generally signals expanding profits, and a falling NIM signals margin compression.
+
+# Basis points
+
+Margins of this kind are small numbers, and they are usually quoted in basis points. A basis point (abbreviated "bp" or "bps", and pronounced "bip" or "bips") is one hundredth of a percentage point:
+
+$$
+	1 \text{ bp} = 0.01\% = 0.0001.
+$$
+
+The unit exists because percentages are ambiguous when they describe changes in rates. If a savings rate rises from 4% to 5%, it has risen by 1 percentage point but by 25 percent of its former value, and "1 percent" could mean either. A rise of 100 basis points always means the first. What a basis point is worth depends on what it is a basis point of. On a \$10,000 savings account it is \$1 a year, too little for any individual to care about, while on a bank's \$50 billion deposit base it is \$5 million a year. A bank's net interest margin might be 300 basis points, and a few basis points more or less across a large balance sheet are tens of millions of dollars.
 
 # The deposit spread
 
@@ -47,6 +56,16 @@ With a beta of $0.2$, a market rate of $5\%$ leaves depositors with $1\%$ and th
 
 A beta is not fixed. When competition for deposits intensifies, the spread compresses. This can happen through several channels: online banks offering higher rates (their overhead is lower, and they need to attract deposits to fund their lending), money market funds offering yields close to market rates, or rate-comparison tools making it easier for customers to find better options. Over the course of a period of high rates, as customers slowly move their money to higher-yielding alternatives, the deposit beta rises and the margin compresses.
 
-# The same spread elsewhere
+# Brokerage cash balance revenue
 
-The deposit-spread mechanism is not confined to banks. It operates in [brokerage cash balance revenue](../brokerage-cash-balance-revenue/), where a brokerage earns interest on customers' uninvested cash and pays the customers a below-market rate. The business is the same: profit from the gap between what the institution earns on someone else's idle money and what it pays them for it.
+The deposit spread is not confined to banks. A retail brokerage earns it on the uninvested cash in its customers' accounts: the proceeds of a sale that have not been reinvested, or a deposit that has not yet been used to buy anything. Through a _sweep program_, an automated system that moves this cash into interest-bearing accounts at partner banks or into money market funds, the brokerage earns interest at or near short-term market rates such as the federal funds rate. It pays the customer a below-market rate, which at many discount brokerages is close to zero.
+
+Suppose a customer holds \$25,000 in uninvested cash, on which the sweep program earns 4.5% a year and the customer is paid 0.5%. The brokerage keeps
+
+$$
+	\$25{,}000 \times (4.5\% - 0.5\%) = \$1{,}000
+$$
+
+a year, a spread of 400 basis points on the balance. Across tens of millions of customers holding hundreds of billions of dollars in cash, the revenue is enormous: Charles Schwab, for instance, has historically earned billions of dollars annually from net interest revenue, a significant portion of which comes from customer cash balances.
+
+Like a bank's, this revenue depends on inattention. A customer who watched the yield on idle cash would move it to a money market fund or a high-yield savings account paying 4% or more, within the same brokerage or at a competitor, and a brokerage whose customers did so in numbers would have to raise the rate it pays or accept a shrinking cash base. Cash balances are one of the two main revenue streams of a retail brokerage, and they pull against the other: revenue from trading, such as [payment for order flow](../adverse-selection/#payment-for-order-flow), grows as customers become more engaged, while revenue from cash balances shrinks as they become more attentive.

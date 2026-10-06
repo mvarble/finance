@@ -1,17 +1,28 @@
 ---
-title: Adverse selection
+title: Market making and adverse selection
 created: 2026-09-30
-updated: 2026-10-05
-depends_on: [market-making]
+updated: 2026-10-06
 ---
 
 <script>
     import Quotes from './Quotes.svelte';
 </script>
 
+A market maker earns its living by quoting prices at which it will buy and sell. Adverse selection, the risk that whoever takes those prices knows more than the market maker does, decides how far apart the prices must be, and it explains why spreads differ between instruments, why the orders of retail customers are prized, and why market makers pay brokerages to receive them.
+
+# Market making
+
+Market making is the activity of continuously quoting prices at which one is willing to buy (the bid) and to sell (the ask, or offer) a financial instrument, thereby providing liquidity to the market. A market maker does not typically bet on whether prices will rise or fall. It aims to profit from the volume of trading, buying at the bid and selling at the ask and earning the difference between the two, the _bid-ask spread_.
+
+Suppose a market maker quotes a bid of $\$50.00$ and an ask of $\$50.05$ for shares of Acme Corp. A customer who wants to sell immediately receives $\$50.00$ per share and one who wants to buy immediately pays $\$50.05$, and the $\$0.05$ between them is the market maker's gross profit per share. If it buys 10,000 shares from sellers and sells 10,000 to buyers over the course of a day, it earns $\$0.05 \times 10{,}000 = \$500$ on that stock alone, and across hundreds of stocks and millions of shares a day the sums are substantial. In modern US equity markets the business is dominated by a handful of large electronic firms, including Citadel Securities, Virtu Financial, Jane Street, and Susquehanna International Group, which handle a substantial fraction of all retail equity trades. Virtu, for example, has reported being profitable on nearly every trading day over multi-year periods.
+
+The market maker's difficulty is that it does not know in advance whether the next customer will buy or sell, or what that customer knows. Two risks follow. The first is _inventory risk_: when more customers sell than buy, or the reverse, the market maker accumulates a net position, and one that ends the day holding 50,000 shares of Acme is exposed to a fall in Acme's price overnight. Market makers manage it by continuously adjusting their quotes, hedging their inventory with related instruments, and balancing their books algorithmically. The second risk is adverse selection, and it is the one that sets the width of the spread.
+
+# Adverse selection
+
 Adverse selection is an economic problem that arises whenever one party to a transaction knows something the other party does not, and exploits that informational advantage. The term originates in insurance markets: people who are most likely to file claims are also the most motivated to buy insurance, so an insurer that prices its policies on the average risk of the population will attract a pool of customers that is riskier than average. The insurer has been _adversely selected_. It attracted the wrong customers because it could not tell the good risks from the bad ones.
 
-The problem appears throughout finance, but it is most central to [market making](../market-making/), on which this document builds. A market maker continuously quotes a bid, the price at which it will buy a security, and an ask, the price at which it will sell. Every time it does so, it faces the possibility that the person on the other side of the trade knows something it does not. Suppose a market maker quotes a bid of $\$50.00$ and an ask of $\$50.05$ on Acme Corp stock. A hedge fund that has spent weeks analyzing Acme's supply chain discovers that a key supplier has gone bankrupt, information the market has not yet priced in. The hedge fund sells 100,000 shares to the market maker at $\$50.00$. When the news breaks and Acme drops to $\$47$, the market maker has lost $\$3$ per share, or $\$300{,}000$, on a trade it would never have made at that price had it known what the hedge fund knew.
+A market maker is in the insurer's position every time it quotes. Suppose a hedge fund that has spent weeks analyzing Acme's supply chain discovers that a key supplier has gone bankrupt, information the market has not yet priced in, and sells 100,000 shares to the market maker at its bid of $\$50.00$. When the news breaks and Acme drops to $\$47$, the market maker has lost $\$3$ per share, or $\$300{,}000$, on a trade it would never have made at that price had it known what the hedge fund knew.
 
 # The spread as compensation
 
@@ -33,12 +44,24 @@ $$
 
 Two things widen the spread in [](eq:spread): a larger share $\pi$ of informed traders, and a larger gap $V_H - V_L$ between what the informed might know and what the public believes. For the Acme example, with the stock worth $\$53$ or $\$47$, a market maker facing one informed trader in a hundred breaks even with a spread of $0.01 \times 6 = \$0.06$, while one facing one informed trader in ten needs $\$0.60$. With no informed traders the spread vanishes, since an order then reveals nothing. The model leaves out the market maker's other costs and risks, which add to the spread in practice, but it isolates the part that is owed to information alone.
 
+# Spreads across instruments
+
+The two quantities of the model explain why spreads vary across instruments. A highly liquid large-cap stock like Apple has abundant public information, fast price discovery, and many competing market makers, all of which reduce the information any single counterparty is likely to hold. Both $\pi$ and $V_H - V_L$ are small, and the spread is a penny or two. A small-cap biotech stock awaiting a regulatory decision on its only drug, by contrast, has enormous information asymmetry: someone may know the trial results before they are public, and the two possible values of the stock are far apart. The adverse selection risk is high, and market makers widen their spreads to compensate.
+
+The pattern holds beyond equities, since market makers quote options, fixed income, foreign exchange, and cryptocurrencies on the same model. Options, which involve more complexity and uncertainty than the stocks beneath them, typically have spreads of several cents or more, and cryptocurrencies, traded on fragmented and relatively immature exchanges, often have wider spreads still. The less liquid and more uncertain the instrument, the wider the spread must be to compensate the market maker for the risks it bears.
+
 # Retail and institutional order flow
 
-This logic explains why market makers care intensely about the _type_ of order flow they receive. Retail customers, individual investors trading from personal accounts, are generally uninformed in the sense of the model. They trade on widely available news, personal financial needs, or general sentiment, not on proprietary research, faster data feeds, or sophisticated quantitative models. A market maker that buys shares from a retail customer who is selling to rebalance a retirement portfolio faces very little risk that the customer knows something about the stock's near-term direction. Retail order flow is therefore the most profitable kind of flow: the market maker earns the spread on nearly every trade with minimal losses to adverse selection. This is why market makers pay brokerages a premium, through [payment for order flow](../payment-for-order-flow/), to receive retail orders.
+The same logic explains why market makers care intensely about the _type_ of order flow they receive. Retail customers, individual investors trading from personal accounts, are generally uninformed in the sense of the model. They trade on widely available news, personal financial needs, or general sentiment, not on proprietary research, faster data feeds, or sophisticated quantitative models. A market maker that buys shares from a retail customer who is selling to rebalance a retirement portfolio faces very little risk that the customer knows something about the stock's near-term direction. Retail order flow is therefore the most profitable kind of flow: the market maker earns the spread on nearly every trade with minimal losses to adverse selection.
 
 Institutional order flow carries much higher adverse selection risk. Hedge funds, proprietary trading firms, and quantitative desks often possess better information, faster execution infrastructure, or more sophisticated analytical tools. A market maker trading against such a counterparty faces a meaningful probability of being on the wrong side of an informed bet. For this reason, market makers quote wider spreads to institutional counterparties, or handle their orders through different channels with less favorable pricing.
 
-# Spreads across instruments
+# Payment for order flow
 
-Adverse selection also explains why spreads vary across instruments. A highly liquid large-cap stock like Apple has abundant public information, fast price discovery, and many competing market makers, all of which reduce the information any single counterparty is likely to hold. Both $\pi$ and $V_H - V_L$ are small, and the spread is a penny or two. A small-cap biotech stock awaiting a regulatory decision on its only drug, by contrast, has enormous information asymmetry: someone may know the trial results before they are public, and the two possible values of the stock are far apart. The adverse selection risk is high, and market makers widen their spreads to compensate.
+Because retail orders are worth more than others, market makers pay to receive them. Payment for order flow (PFOF) is the fee a retail brokerage receives from a market maker for routing its customers' trades to that market maker for execution. It is the primary way that commission-free brokerages such as Robinhood, Schwab, and E\*TRADE earn revenue from trades.
+
+When a retail customer places a trade, the brokerage does not send the order to a public exchange like the NYSE or Nasdaq. It routes the order to a wholesale market maker, which executes the trade internally, taking the other side from its own inventory and earning the spread. Suppose a customer buys 1,000 shares of a stock through Robinhood when the national best bid is $\$50.00$ and the national best ask is $\$50.02$. Robinhood routes the order to Citadel Securities, which fills it at $\$50.01$, a penny better than the public ask (this is called _price improvement_), and can expect to buy the shares back near $\$50.00$. Citadel earns $\$0.01$ per share, or $\$10$ on the trade, and pays Robinhood a portion of it, perhaps $\$5$ to $\$8$. The customer got a slightly better price than the public quote, the market maker earned a small profit, and the brokerage earned revenue without charging a commission.
+
+The practice is controversial. Critics argue that it creates a conflict of interest: the brokerage may route orders to whichever market maker pays the most for them, when another venue might have given the customer a slightly better fill. Proponents argue that it is what makes commission-free trading possible, and that with price improvement the customer does better than the publicly quoted price.
+
+Payment for order flow scales with trading volume: more customer trades mean more spreads captured by market makers and more paid to brokerages, which gives retail brokerages a strong incentive to encourage trading. It also makes some kinds of trading more valuable than others. Instruments with wider spreads, such as options and cryptocurrencies, generate more payment per trade than plain equities, which is why brokerages actively promote options trading and, increasingly, trading in cryptocurrencies and [prediction markets](../prediction-markets/).
