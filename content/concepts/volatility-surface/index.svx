@@ -1,0 +1,93 @@
+---
+title: Volatility surface
+created: 2025-07-09
+updated: 2026-10-05
+depends_on: [black-scholes-model, greeks]
+katex_macros:
+    '\IV': '\sigma_{\mathrm{impl}}'
+---
+
+<script>
+    import Skew from './Skew.svelte';
+    import Surface from './Surface.svelte';
+</script>
+
+The volatility surface is the implied volatility of the options on one underlying asset, regarded as a function of strike price and time to expiration. It is the central object of practical options trading: while the [Black-Scholes model](../black-scholes-model/) assumes volatility is a single constant, real markets assign a different implied volatility to every option contract, and the pattern of these volatilities across strikes and expirations encodes the market's collective view of how the price may behave.
+
+This document builds on the [Black-Scholes model](../black-scholes-model/) and on the sensitivity measures known as [the Greeks](../greeks/).
+
+# Implied volatility
+
+The Black-Scholes formula prices a [European call](../european-option/) as a function of five inputs: the stock price $S$, the strike $K$, the time to expiration $\tau$, the risk-free rate $r$, and the volatility $\sigma$. The first four are directly observable in the market. The fifth is not. **Implied volatility** is the value of $\sigma$ that, when substituted into the Black-Scholes formula, reproduces the observed market price of the option.
+
+Formally, if $C_{\mathrm{mkt}}$ is the market price of a call with parameters $(S, K, \tau, r)$, the implied volatility $\IV$ is the solution to
+
+$$
+	C_{\mathrm{BS}}(S, K, \tau, r, \IV) = C_{\mathrm{mkt}}, @tag(impl-vol-def)
+$$
+
+where $C_{\mathrm{BS}}$ is the Black-Scholes call price. The solution exists and is unique for any market price that admits no arbitrage, because the Black-Scholes price is strictly increasing in $\sigma$ (the option's [vega](../greeks/#vega) is always positive), ranging from $(S - Ke^{-r\tau})^+$ at $\sigma = 0$ to $S$ as $\sigma \to \infty$. Equation [](eq:impl-vol-def) cannot be inverted algebraically. It is solved numerically, typically by Newton's method with vega as the derivative.
+
+Implied volatility is the language in which options are quoted. A trader who says "the 105 call is trading at 22 vol" means that the market price of that call is whatever the Black-Scholes formula produces when $\sigma = 0.22$ is substituted. The convention exists because the dollar price of an option depends on all five inputs and is hard to compare across strikes and expirations, while implied volatility reduces the price to a single number that is roughly comparable.
+
+# Smile and skew
+
+If the Black-Scholes assumptions held exactly, with stock returns lognormal and volatility constant, then every option on the same stock with the same expiration would have the same implied volatility, whatever its strike. Plotting implied volatility against strike would yield a flat line at the level of the true volatility.
+
+This is not what markets produce. A plot of implied volatility against strike, for options with a common expiration, typically shows one of two patterns. A **volatility smile** is a U-shaped curve in which implied volatility is lowest for at-the-money options and rises for strikes far from the current price on either side. Smiles are characteristic of currency options, where large moves in either direction are more common than the lognormal model predicts. A **volatility skew** (or smirk) is a downward-sloping curve in which implied volatility is highest for low strikes, those of out-of-the-money puts, and decreases as the strike increases. Skews are the dominant pattern in equity index options, and became much more pronounced after the stock market crash of October 1987, which demonstrated that large downward moves are more frequent than the lognormal model allows.
+
+As an example, consider the S&P 500 index at $S = 4500$. The following table shows representative implied volatilities for options on the index expiring in 30 days and in one year, across several strikes.
+
+| Strike | Moneyness ($K/S$) | 30 days | One year |
+| ------ | ----------------- | ------- | -------- |
+| 4050   | 0.90              | 24.5%   | 20.1%    |
+| 4275   | 0.95              | 19.8%   | 17.5%    |
+| 4500   | 1.00              | 16.2%   | 15.8%    |
+| 4725   | 1.05              | 14.1%   | 14.6%    |
+| 4950   | 1.10              | 13.0%   | 13.8%    |
+
+<Skew />
+
+The skew is plain at both expirations. At 30 days, the 4050 strike, 10% below the index, has an implied volatility 8.3 percentage points higher than the at-the-money strike: the market prices the risk of a crash into downside protection. A trader who sells the 4050 put collects a premium that compensates for that tail risk, and the [delta hedge](../greeks/#delta-hedging-in-practice) of the position must be computed at the elevated volatility. At one year the skew persists but is flatter, spanning 6.3 points where the 30-day skew spans 11.5, because near-term event risk and the demand for immediate protection bear hardest on short-dated options.
+
+The skew in equity markets reflects two economic forces. First, the distribution of stock returns has **fatter left tails** than the lognormal distribution: crashes happen more often and are more severe than geometric Brownian motion predicts. Market participants price this risk into out-of-the-money puts, driving their implied volatility above the at-the-money level. Second, there is a structural imbalance of supply and demand: institutional investors are persistent buyers of downside protection, while those willing to sell it demand compensation. The resulting pressure raises the prices, and so the implied volatilities, of low-strike options relative to high-strike ones.
+
+# The surface
+
+Extending the smile from one expiration to all expirations produces the **volatility surface**: a function $\IV(K, \tau)$ that assigns an implied volatility to every combination of strike and time to expiration. Since traders often think in terms of moneyness, the surface is commonly parameterized as $\IV(K/S, \tau)$, a function of the ratio $K/S$ and time.
+
+<Surface />
+
+A typical equity index volatility surface has the following features.
+
+**The skew slopes downward** at every expiration: lower strikes have higher implied volatility than higher strikes. The slope is steepest for short expirations, where crash risk and near-term uncertainty concentrate.
+
+**The level shifts** as market conditions change. In calm markets, the entire surface sits lower. In periods of stress, such as the 2008 financial crisis or the selloff of March 2020, the surface lifts, with the short-dated, low-strike corner rising the most. The Chicago Board Options Exchange Volatility Index (VIX) summarizes the level of the S&P 500 surface at an expiration of about thirty days.
+
+**Short-dated implied volatilities move the most.** A one-week option's implied volatility can swing by many percentage points in a single day, while a two-year option's moves much more slowly. Short-dated options are sensitive to immediate events (earnings announcements, economic data releases, central bank decisions), while long-dated options average over a longer future.
+
+# Why the surface exists
+
+The volatility surface exists because the Black-Scholes model is wrong in specific, systematic ways. The model assumes that returns are lognormal and that volatility is constant. In reality, returns have fat tails, exhibit jumps, and cluster in volatility: periods of high volatility tend to be followed by more high volatility. Each of these departures from the model's assumptions leaves its mark on implied volatility.
+
+**Fat tails** mean that extreme outcomes, large gains or large losses, are more probable than the lognormal distribution allows. Options that pay off in these extreme states, deep out-of-the-money puts and calls, are therefore worth more than the Black-Scholes formula predicts at the at-the-money volatility, which shows up as higher implied volatilities at the wings.
+
+**Jumps**, discontinuous moves in the stock price such as those caused by earnings surprises or macroeconomic shocks, affect short-dated options disproportionately. A jump can carry the stock past the strike of a short-dated option, turning a nearly worthless position into a valuable one. This risk inflates the implied volatility of short-dated options, especially around known event dates.
+
+**Stochastic volatility**, the fact that volatility itself changes over time, means that the assumption of a constant $\sigma$ is a poor approximation even for moderately dated options. Models that treat volatility as a stochastic process of its own, such as the Heston model, can reproduce the qualitative features of the surface, including the smile and its dependence on expiration.
+
+# Using the surface
+
+The volatility surface is not merely descriptive. It is the primary tool for several practical tasks.
+
+**Pricing non-standard options.** A trader asked to price an option with a strike or expiration not actively traded in the market interpolates the surface to find the appropriate implied volatility, then substitutes it into the Black-Scholes formula. The surface thereby provides a consistent pricing framework for every option on a given underlying.
+
+**Relative value analysis.** If an option's implied volatility is significantly above the level implied by the surrounding surface, it is "rich", that is, expensive relative to its neighbors. If it is below, it is "cheap". Traders look for such mispriced regions and construct spread trades to exploit them.
+
+**Risk management.** A portfolio of options on the same underlying is exposed to changes in the level, skew, and curvature of the surface. Risk managers summarize these exposures with vega (sensitivity to the level), **vanna** (the sensitivity of delta to changes in implied volatility, or equivalently of vega to changes in the stock price), and **volga** (the sensitivity of vega to changes in implied volatility). Together, these higher-order Greeks describe how the portfolio behaves as the surface deforms.
+
+**Forecasting.** The shape of the surface contains information about the market's expectations. A steep skew signals elevated demand for downside protection, which may indicate fear of a crash. An inverted term structure, with short-dated implied volatility above long-dated, suggests that the market expects a near-term event to raise volatility temporarily. These signals are not mechanical predictors, but they inform the judgment of traders and risk managers.
+
+# Beyond Black-Scholes
+
+The volatility surface is, in a sense, an admission that the Black-Scholes model is an imperfect description of reality. Practitioners do not abandon the model on that account. They use it as a quoting convention: the surface maps market prices into a space where they can be compared, interpolated, and analyzed. More sophisticated models, among them local volatility models, stochastic volatility models such as Heston and SABR, and jump-diffusion models, attempt to explain the surface by enriching the dynamics of the underlying process, and are calibrated to reproduce the observed surface as closely as possible. The Black-Scholes framework, for all its simplifications, remains the common language in which all of these models report their results.

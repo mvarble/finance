@@ -1,0 +1,182 @@
+---
+title: Black-Scholes model
+created: 2025-07-09
+updated: 2026-10-05
+depends_on: [european-option]
+katex_macros:
+    '\dd': '\mathrm{d}'
+---
+
+<script>
+    import Statement from '@mvarble/mesearch/Statement.svelte';
+    import * as blackScholesFormula from './statements/black-scholes-formula.md';
+    import Paths from './Paths.svelte';
+    import CallPrice from './CallPrice.svelte';
+</script>
+
+The Black-Scholes model is a mathematical framework for pricing [European options](../european-option/). Published by Fischer Black and Myron Scholes in 1973 [](cite:black1973), with an independent and essentially simultaneous derivation by Robert Merton [](cite:merton1973), it was the first model to produce a closed-form formula for the fair value of a European call or put under a small set of idealizing assumptions. The model rests on three pillars: a stochastic process for the price of the underlying asset (geometric Brownian motion), Itô's lemma from stochastic calculus, and a no-arbitrage replication argument.
+
+This document builds on [European options](../european-option/), from which it takes the payoffs of calls and puts and put-call parity.
+
+# Assumptions
+
+The model prices a European option on a stock under the following assumptions:
+
+1. The stock price $S_t$ follows a **geometric Brownian motion** with constant drift $\mu$ and constant volatility $\sigma$.
+2. Trading in the stock and the option is continuous in time, with no transaction costs and no restrictions on short selling.
+3. There exists a risk-free interest rate $r$, constant and known, at which any amount can be borrowed or lent.
+4. The stock pays no dividends during the life of the option.
+5. There are no arbitrage opportunities.
+
+Assumptions 2, 3, and 5 are standard idealizations of frictionless markets. Assumption 4 is a simplification that can be relaxed by [adjusting the formula](#dividends). Assumption 1, geometric Brownian motion with constant parameters, is the substantive modeling choice, and the one that observed option prices most plainly contradict.
+
+# Geometric Brownian motion
+
+The stock price is modeled as the solution to the stochastic differential equation
+
+$$
+	\dd S_t = \mu S_t \dd t + \sigma S_t \dd W_t, @tag(gbm-sde)
+$$
+
+where $W_t$ is a standard Brownian motion (also called a Wiener process), $\mu$ is the expected rate of return (the drift), and $\sigma$ is the volatility. A Brownian motion is a continuous random path that starts at zero and whose increment $W_t - W_s$ over any interval is normally distributed with mean zero and variance $t - s$, independently of the path up to time $s$. The first term $\mu S_t \dd t$ represents the deterministic growth of the stock, while the second term $\sigma S_t \dd W_t$ captures random fluctuations whose magnitude is proportional to the current price. The proportionality to $S_t$ is what makes the process _geometric_ and not arithmetic: percentage changes, not absolute changes, are the random component. A stock at $\$100$ with $\sigma = 20\%$ moves by about $\$1.26$ on a typical trading day, since $100 \times 0.2 \times \sqrt{1/252} \approx 1.26$, and the same stock at $\$200$ moves by about twice that.
+
+# Itô's lemma
+
+Itô's lemma is the chain rule of stochastic calculus. For a function $f(t, S)$ that is once continuously differentiable in $t$ and twice in $S$, it states that
+
+$$
+	\dd f = \frac{\partial f}{\partial t}\dd t + \frac{\partial f}{\partial S}\dd S_t + \frac{1}{2}\frac{\partial^2 f}{\partial S^2}(\dd S_t)^2, @tag(ito-lemma)
+$$
+
+where the squared differential is worked out with the rules $\dd t \cdot \dd t = 0$, $\dd t \cdot \dd W_t = 0$, and $(\dd W_t)^2 = \dd t$. The second-order term has no counterpart in the ordinary chain rule. It survives because a Brownian increment over a short time $\dd t$ has size of order $\sqrt{\dd t}$, so its square is of order $\dd t$ and cannot be neglected.
+
+For the geometric Brownian motion [](eq:gbm-sde), the rules give $(\dd S_t)^2 = \sigma^2 S_t^2 \dd t$, and substituting into [](eq:ito-lemma) yields
+
+$$
+	\dd f = \left(\frac{\partial f}{\partial t} + \mu S_t \frac{\partial f}{\partial S} + \frac{1}{2}\sigma^2 S_t^2 \frac{\partial^2 f}{\partial S^2}\right)\dd t + \sigma S_t \frac{\partial f}{\partial S}\dd W_t. @tag(ito-expanded)
+$$
+
+The crucial feature of [](eq:ito-expanded) is that the randomness in $\dd f$ comes entirely through the $\dd W_t$ term, whose coefficient is $\sigma S_t \frac{\partial f}{\partial S}$. Any quantity that is a function of time and the stock price is therefore driven by the same Brownian motion as the stock, scaled by $\frac{\partial f}{\partial S}$, a fact the replication argument exploits.
+
+# The lognormal distribution of the stock price
+
+The equation [](eq:gbm-sde) can be solved by applying [](eq:ito-expanded) to $f(t, S) = \ln S$. Because $\frac{\partial f}{\partial t} = 0$, $\frac{\partial f}{\partial S} = 1/S$ and $\frac{\partial^2 f}{\partial S^2} = -1/S^2$,
+
+$$
+	\dd(\ln S_t) = \Big(\mu - \frac{\sigma^2}{2}\Big)\dd t + \sigma \dd W_t.
+$$
+
+The right-hand side no longer involves $S_t$, so it can be integrated directly from $0$ to $T$:
+
+$$
+	\ln S_T = \ln S_0 + \Big(\mu - \frac{\sigma^2}{2}\Big)T + \sigma W_T. @tag(gbm-solution)
+$$
+
+Since $W_T \sim \mathcal{N}(0, T)$, the log-price $\ln S_T$ is normally distributed, which means $S_T$ is lognormally distributed. The extra term $-\sigma^2/2$ is the Itô correction: it arises because the expectation of a convex function of a random variable is not the function of the expectation. With it, $\mathbb{E}[S_T] = S_0 e^{\mu T}$, so $\mu$ is indeed the expected rate of return.
+
+<Paths />
+
+# The Black-Scholes equation
+
+The central insight of Black and Scholes is that an option can be replicated by a continuously adjusted portfolio of the underlying stock and risk-free borrowing or lending. Let $V(t, S)$ denote the price of the option at time $t$ when the stock price is $S$. By [](eq:ito-expanded), the change in the option price over a small time interval is
+
+$$
+	\dd V = \left(\frac{\partial V}{\partial t} + \mu S \frac{\partial V}{\partial S} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}\right)\dd t + \sigma S \frac{\partial V}{\partial S}\dd W_t.
+$$
+
+Now construct a portfolio $\Pi$ consisting of one unit of the option and $-\Delta$ units of the stock, where $\Delta$ is to be chosen so as to eliminate the random component:
+
+$$
+	\Pi = V - \Delta \cdot S.
+$$
+
+The change in the portfolio value is $\dd\Pi = \dd V - \Delta \cdot \dd S$. Substituting the expressions for $\dd V$ and $\dd S$,
+
+$$
+	\dd\Pi = \left(\frac{\partial V}{\partial t} + \mu S \frac{\partial V}{\partial S} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} - \Delta \mu S\right)\dd t + \sigma S\left(\frac{\partial V}{\partial S} - \Delta\right)\dd W_t.
+$$
+
+Choose $\Delta = \frac{\partial V}{\partial S}$. The $\dd W_t$ term vanishes, and the portfolio becomes locally riskless:
+
+$$
+	\dd\Pi = \left(\frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}\right)\dd t.
+$$
+
+A riskless portfolio must earn the risk-free rate, or arbitrage would exist. Therefore $\dd\Pi = r\Pi \dd t = r\big(V - S\frac{\partial V}{\partial S}\big)\dd t$. Equating the two expressions for $\dd\Pi$ and rearranging gives the **Black-Scholes partial differential equation**:
+
+$$
+	\frac{\partial V}{\partial t} + rS\frac{\partial V}{\partial S} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} = rV. @tag(bs-pde)
+$$
+
+The drift $\mu$ of the stock has disappeared from the equation entirely. The option price does not depend on the expected return of the stock, only on the volatility $\sigma$, the risk-free rate $r$, and the current stock price $S$. This is the most striking consequence of the replication argument: two investors who disagree about where the stock is headed, but agree on its volatility, must agree on the price of the option.
+
+# The Black-Scholes formula
+
+The equation [](eq:bs-pde) holds for any derivative of the stock, and what singles out a particular one is its terminal condition. For a European call with strike $K$ and expiration $T$, the terminal condition is $V(T, S) = (S - K)^+$, and for a European put it is $V(T, S) = (K - S)^+$.
+
+The solution proceeds by a change of variables that transforms [](eq:bs-pde) into the heat equation of mathematical physics. Let $\tau = T - t$ be the time remaining to expiration, let $x = \ln S$, and write $V(t, S) = e^{-r\tau} u(\tau, x)$. Under these substitutions, [](eq:bs-pde) becomes
+
+$$
+	\frac{\partial u}{\partial \tau} = \frac{1}{2}\sigma^2 \frac{\partial^2 u}{\partial x^2} + \Big(r - \frac{1}{2}\sigma^2\Big)\frac{\partial u}{\partial x}.
+$$
+
+A further shift $y = x + (r - \sigma^2/2)\tau$ eliminates the first-derivative term, leaving the heat equation $\frac{\partial u}{\partial \tau} = \frac{1}{2}\sigma^2 \frac{\partial^2 u}{\partial y^2}$, whose solution for a given initial condition is an integral of that condition against a normal density. Carrying out the integral for the payoff of a call and translating back to the original variables gives the price.
+
+<Statement {...blackScholesFormula} />
+
+The put price need not be derived separately: it is the price that put-call parity ([%full](statement:concepts/european-option/put-call-parity) of [European option](../european-option/#put-call-parity)) assigns to the put once the call price [](eq:bs-call) is known, using $1 - \Phi(d) = \Phi(-d)$.
+
+The two terms of [](eq:bs-call) have natural interpretations. The quantity $\Phi(d_2)$ is the probability, under the risk-neutral measure described in the next section, that the option expires in the money ($S_T > K$), so $K e^{-rT}\Phi(d_2)$ is the present value of the strike weighted by the chance of paying it. The quantity $\Phi(d_1)$ is $\frac{\partial C}{\partial S}$, the number of shares held in the replicating portfolio.
+
+# Risk-neutral pricing
+
+The disappearance of $\mu$ from [](eq:bs-pde) points to a deeper principle. The option price can be computed as if all investors were risk-neutral, that is, as if the stock's expected return were the risk-free rate $r$ and not $\mu$. Under this **risk-neutral measure** $\mathbb{Q}$, the stock price process is
+
+$$
+	\dd S_t = r S_t \dd t + \sigma S_t \dd \tilde{W}_t,
+$$
+
+where $\tilde{W}_t$ is a Brownian motion under $\mathbb{Q}$. The option price is then the discounted expected payoff under $\mathbb{Q}$:
+
+$$
+	V(t, S) = e^{-r(T-t)}\, \mathbb{E}^{\mathbb{Q}}\big[(S_T - K)^+ \;\big|\; S_t = S\big].
+$$
+
+Evaluating this expectation directly, by integrating the call payoff against the lognormal density of $S_T$ given by [](eq:gbm-solution) with $\mu$ replaced by $r$, reproduces [](eq:bs-call). The two approaches, solving the partial differential equation and computing the risk-neutral expectation, are equivalent by the Feynman-Kac theorem.
+
+# A worked example
+
+Consider a European call on a stock currently priced at $S_0 = \$100$, with strike $K = \$105$, expiration $T = 0.5$ years, risk-free rate $r = 5\%$ per annum, and volatility $\sigma = 20\%$ per annum. The intermediate quantities [](eq:d1d2) are
+
+$$
+	\begin{aligned}
+		d_1 &= \frac{\ln(100/105) + (0.05 + 0.2^2/2)(0.5)}{0.2\sqrt{0.5}} = \frac{-0.0488 + 0.0350}{0.1414} \approx -0.0975, \\
+		d_2 &\approx -0.0975 - 0.1414 = -0.2389.
+	\end{aligned}
+$$
+
+From the standard normal distribution function, $\Phi(-0.0975) \approx 0.4612$ and $\Phi(-0.2389) \approx 0.4056$. The call price is
+
+$$
+	C = 100 \times 0.4612 - 105 \times e^{-0.025} \times 0.4056 \approx 46.12 - 41.53 = 4.58.
+$$
+
+A buyer pays approximately $\$4.58$ for the right to purchase the stock at $\$105$ in six months. If the stock is above $\$105$ at expiration, the option is exercised and the buyer captures the excess. If it is below, the option expires worthless and the buyer's loss is limited to the premium. The corresponding put costs $P = C - S_0 + Ke^{-rT} \approx 4.58 - 100 + 102.41 = \$6.99$.
+
+<CallPrice />
+
+The figure places the example on the curve for six months and shows how the price depends on the two inputs that change from day to day. For a fixed time to expiration, the price is an increasing, convex function of the stock price that lies above the payoff. The excess over the payoff is the option's time value, which is greatest near the strike and shrinks to nothing as expiration approaches.
+
+# Dividends
+
+When the underlying pays a continuous dividend yield $q$, the stock price process under the risk-neutral measure becomes $\dd S_t = (r - q)S_t \dd t + \sigma S_t \dd \tilde{W}_t$. The formula adjusts by replacing $S_0$ with $S_0 e^{-qT}$:
+
+$$
+	C = S_0 e^{-qT}\Phi(d_1) - K e^{-rT}\Phi(d_2),
+$$
+
+where $d_1$ and $d_2$ are computed as in [](eq:d1d2) but with $r$ replaced by $r - q$ in the numerator of $d_1$. This extension is used when pricing options on equity indices, where $q$ is the aggregate dividend yield of the index, and on foreign exchange, where the foreign interest rate plays the role of $q$, a formulation known as the Garman-Kohlhagen model.
+
+# Beyond the model
+
+The partial derivatives of the formula with respect to its inputs, which measure how an option's price responds to the market and govern how it is hedged, are [the Greeks](../greeks/). The assumption of a single constant volatility does not survive contact with market prices: options on the same stock trade at prices that correspond to different values of $\sigma$ depending on their strike and expiration, a pattern described by the [volatility surface](../volatility-surface/).

@@ -1,0 +1,52 @@
+---
+title: Net interest margin
+created: 2026-09-30
+updated: 2026-10-05
+depends_on: [basis-points]
+---
+
+<script>
+    import DepositBeta from './DepositBeta.svelte';
+</script>
+
+Net interest margin (NIM) is the difference between the interest income a bank earns on its assets and the interest it pays on its liabilities, expressed as a percentage of the bank's average earning assets:
+
+$$
+	\mathrm{NIM} = \frac{\text{interest income} - \text{interest expense}}{\text{average earning assets}}.
+$$
+
+It is one of the most important indicators of a bank's profitability and is reported quarterly in earnings statements. A rising NIM generally signals expanding profits, and a falling NIM signals margin compression. Margins of this kind are small numbers and are usually quoted in [basis points](../basis-points/), hundredths of a percentage point.
+
+# The deposit spread
+
+The core mechanism behind NIM is the deposit spread. When a customer deposits money in a checking or savings account, the bank does not hold that cash idle. It lends the money out, as mortgages, auto loans, commercial loans, or credit card receivables, or invests it in securities such as government bonds, and earns a market rate of interest on these assets. Meanwhile, it pays the depositor a below-market rate. The difference between the two rates is the deposit spread, and it is one of the largest sources of profit for traditional banks.
+
+An example makes the scale clear. Suppose a bank has $\$10$ billion in deposits. It pays an average interest rate of $1\%$ on those deposits, costing $\$100$ million per year. It lends out or invests that $\$10$ billion at an average rate of $5\%$, earning $\$500$ million per year. The deposit spread is 4 percentage points, or 400 basis points, and the bank earns $\$400$ million per year from it. The bank's net interest margin would be
+
+$$
+	\mathrm{NIM} = \frac{\$500\text{ million} - \$100\text{ million}}{\$10\text{ billion}} = 4\%
+$$
+
+in this simplified case. In practice, banks also have other interest-bearing liabilities (wholesale borrowing, bonds) and other earning assets (securities portfolios), so the actual calculation is more involved, but the deposit spread is the conceptual heart of it.
+
+The deposit spread depends critically on customer inertia. Most retail customers do not actively optimize their deposit accounts. They leave money in low-yield checking accounts, do not shop around for the best savings rate, and do not move money to higher-yielding alternatives when market rates rise. This inattention allows banks to keep deposit rates well below the rates they earn on their lending and investment. When a bank's savings account pays $0.5\%$ and the federal funds rate is $5\%$, the bank earns a very large spread on every dollar of deposits, but only because most customers do not bother to move their money elsewhere.
+
+# Deposit beta
+
+The **deposit beta** is the fraction of a change in market interest rates that a bank passes through to its depositors:
+
+$$
+	\beta = \frac{\text{change in the deposit rate}}{\text{change in the market rate}}.
+$$
+
+Historically, deposit betas have been low. When the Federal Reserve raises rates by 100 basis points, banks might raise deposit rates by only 20 to 40 basis points, a beta of $0.2$ to $0.4$, and capture the remaining 60 to 80 basis points as expanded margin. The assets a bank holds reprice toward the market rate while its deposits lag, so rising rates widen the deposit spread and falling rates narrow it.
+
+<DepositBeta />
+
+With a beta of $0.2$, a market rate of $5\%$ leaves depositors with $1\%$ and the bank with a spread of 400 basis points, the situation of the example above. With a beta of $0.4$ the same market rate leaves a spread of 300 basis points.
+
+A beta is not fixed. When competition for deposits intensifies, the spread compresses. This can happen through several channels: online banks offering higher rates (their overhead is lower, and they need to attract deposits to fund their lending), money market funds offering yields close to market rates, or rate-comparison tools making it easier for customers to find better options. Over the course of a period of high rates, as customers slowly move their money to higher-yielding alternatives, the deposit beta rises and the margin compresses.
+
+# The same spread elsewhere
+
+The deposit-spread mechanism is not confined to banks. It operates in [brokerage cash balance revenue](../brokerage-cash-balance-revenue/), where a brokerage earns interest on customers' uninvested cash and pays the customers a below-market rate. The business is the same: profit from the gap between what the institution earns on someone else's idle money and what it pays them for it.

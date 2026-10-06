@@ -1,1 +1,1 @@
-An analysis of Matt Levine's Money Stuff piece "Attention is all you need", which reads agentic AI as a dispersion trade across retail finance.
+A companion to Matt Levine's column on how agentic AI splits retail finance into businesses that profit from customers' inattention and businesses that profit from their activity. It explains the dispersion trade and the wheel strategy along the way.

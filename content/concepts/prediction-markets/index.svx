@@ -1,0 +1,48 @@
+---
+title: Prediction markets and sportsbooks
+created: 2026-09-30
+updated: 2026-10-05
+depends_on: [adverse-selection]
+---
+
+<script>
+    import Margins from './Margins.svelte';
+</script>
+
+Prediction markets are financial markets where participants trade contracts whose payoffs depend on the outcome of future events. These events can include elections, economic data releases, sporting events, geopolitical developments, or any other uncertain future occurrence. Contracts are priced according to the market's collective estimate of the probability of each outcome, and traders buy or sell according to whether they believe that estimate is too low or too high. Sportsbooks sell bets on sporting events at odds they set themselves, and their odds embody the same idea in an older form.
+
+This document builds on [adverse selection](../adverse-selection/), which explains why the spread on a traded contract depends on how much its buyers and sellers know.
+
+# Event contracts
+
+The typical contract of a prediction market pays $\$1$ if a stated event occurs and nothing otherwise. Its price, a number between $\$0$ and $\$1$, can be read as a probability. Suppose a market offers contracts on a presidential election, and a contract that pays $\$1$ if Candidate A wins is trading at $\$0.55$. The market is assigning a probability of about $55\%$ to Candidate A winning. A trader who believes the event has probability $q$ and buys at price $p$ expects a profit of
+
+$$
+	q \times (1 - p) - (1 - q) \times p = q - p
+$$
+
+per contract. A trader who believes Candidate A is $70\%$ likely to win therefore buys at $\$0.55$ for an expected profit of $\$0.15$ per contract, and a trader who believes Candidate A is only $40\%$ likely to win sells. When the election resolves, the winning contract pays $\$1$ and the losing contract pays $\$0$. Traders who were correct profit, and traders who were wrong lose their stake.
+
+# Sportsbook odds and the vigorish
+
+A sportsbook sets odds or a point spread for a sporting event and accepts bets from customers. In an NFL game, for example, the sportsbook might make the Kansas City Chiefs 7-point favorites over the Denver Broncos, with both sides priced at $-110$, meaning that a bettor must wager $\$110$ to win $\$100$. A bet at $-110$ breaks even only if it wins with probability
+
+$$
+	\frac{110}{110 + 100} \approx 52.4\%,
+$$
+
+although the point spread is chosen to make the two sides about equally likely. The probabilities implied by the two prices sum to $104.8\%$, and the excess over $100\%$ is the sportsbook's margin. On every matched pair of bets the sportsbook collects $\$110$ from a Chiefs bettor and $\$110$ from a Broncos bettor, pays $\$210$ to the winner, and keeps the remaining $\$10$, which is $10/220 \approx 4.5\%$ of the money wagered. This built-in margin is called the _vigorish_ (or "vig" or "juice"), and it means the sportsbook profits whichever side wins, as long as the bets on the two sides roughly balance.
+
+# Why the business is profitable
+
+Prediction markets and sportsbooks share three structural characteristics that make them highly profitable, particularly when volume is high.
+
+The first is wide margins. The bid-ask spread or vigorish on these contracts is much wider than on traditional financial instruments like stocks. A stock might have a bid-ask spread of $\$0.01$ on a $\$100$ share, or $0.01\%$. A sports bet at $-110$ carries a margin of about $4.5\%$. A prediction market contract might have a spread of $\$0.03$ to $\$0.05$ at a price of $\$0.55$, or $5\%$ to $9\%$. These wide margins exist because outcomes are highly uncertain and the platforms, or the market makers who quote on them, need a larger buffer against adverse moves.
+
+<Margins />
+
+The second characteristic is low adverse selection risk, the risk of trading against a counterparty who knows more. While some bettors have genuine expertise (a professional handicapper, a seasoned political analyst, a sophisticated quantitative model), the vast majority of retail participants have no informational advantage over the market. A casual sports fan betting on the weekend's football games, or an individual buying election contracts on a hunch, is an uninformed counterparty. The house, whether a sportsbook or a market maker on a prediction market, is therefore relatively safe on either side of the bet, and the wide margin provides additional cushion against the occasional sharp bettor.
+
+The third characteristic is that revenue scales directly with volume. A customer who buys a stock and holds it for years generates little ongoing revenue. Every bet or prediction market trade, by contrast, generates margin for the platform. A customer who makes 100 bets per week generates 100 times the margin of a customer who makes one. More activity means more revenue, whether the customer wins or loses.
+
+Together these characteristics mean that any force that increases the frequency of bets and trades, without meaningfully improving the bettor's odds of winning, is highly beneficial to these platforms. A customer who bets occasionally out of personal interest generates modest revenue. A customer whose automated systems research, analyze, and trade around the clock generates many times more, because each trade contributes margin to the platform. The additional activity does not improve the customer's expected return on each bet, since the house edge is unchanged. It multiplies the number of bets on which that edge is paid.

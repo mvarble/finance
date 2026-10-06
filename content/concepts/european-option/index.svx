@@ -1,0 +1,61 @@
+---
+title: European option
+created: 2025-07-09
+updated: 2026-10-05
+depends_on: []
+---
+
+<script>
+    import Statement from '@mvarble/mesearch/Statement.svelte';
+    import Proof from '@mvarble/mesearch/Proof.svelte';
+    import * as putCallParity from './statements/put-call-parity.md';
+    import Payoffs from './Payoffs.svelte';
+</script>
+
+An option is a contract that gives its holder the right, but not the obligation, to buy or sell an underlying asset at a predetermined price on or before a specified date. The two basic types are **call options**, which confer the right to buy, and **put options**, which confer the right to sell. The predetermined price is the **strike price** $K$, and the specified date is the **expiration date** $T$. The price paid to acquire the option is the **premium**. The party who sells the option, and so takes on the obligation that matches the holder's right, is its **writer**.
+
+Options are classified by when they may be exercised. An **American option** may be exercised at any time up to and including the expiration date. A **European option** may be exercised only at expiration itself. The distinction is contractual, not geographic: European options are traded worldwide, and American options are traded in Europe. Most exchange-traded equity options in the United States are American-style, while many index options and over-the-counter derivatives are European-style. The restriction makes European options the simpler of the two to analyse, because the writer faces a single known date on which the option may be exercised and not a continuous range of them.
+
+# Payoffs at expiration
+
+At expiration $T$, the holder of a European call compares the market price of the underlying asset, $S_T$, with the strike price $K$. If $S_T > K$, the holder exercises the option, buys the asset for $K$, and captures $S_T - K$. If $S_T \leq K$, the holder lets the option expire worthless. The payoff of a European call is therefore
+
+$$
+	\max(S_T - K,\; 0) = (S_T - K)^+.
+$$
+
+The payoff of a European put is the mirror image. The holder exercises only when $S_T < K$, selling the asset for more than its market value:
+
+$$
+	\max(K - S_T,\; 0) = (K - S_T)^+.
+$$
+
+<Payoffs />
+
+These payoffs are piecewise linear in $S_T$, with a kink at $S_T = K$. The call payoff is zero for all $S_T \leq K$ and increases one-for-one with $S_T$ above $K$. The put payoff decreases one-for-one with $S_T$ below $K$ and is zero above it. A call with strike $\$100$ on a stock that finishes at $\$112$ pays $\$12$, and the put with the same strike pays nothing; had the stock finished at $\$91$, the put would pay $\$9$ and the call nothing.
+
+The holder's profit is the payoff less the premium paid, so the most the holder can lose is the premium, while the gain is unbounded for a call and as large as $K$ for a put. This asymmetry is what distinguishes options from forward contracts, whose payoffs are linear in $S_T$ and can be negative. An option is said to be **in the money** when exercising it at the current price of the underlying would pay something ($S > K$ for a call, $S < K$ for a put), **out of the money** in the opposite case, and **at the money** when the price sits at the strike.
+
+# The underlying asset
+
+The underlying asset of an option can be almost anything: a share of stock, a stock index, a currency, a commodity, an interest rate, or even another derivative. The only requirement is that the asset's price be observable at expiration. In practice, the most liquid options markets are on equity indices such as the S&P 500, individual equities, foreign exchange, and government bond futures.
+
+The price of the underlying asset at any time $t$ before expiration is denoted $S_t$. The theory of option pricing concerns how $S_t$ evolves over time and how that evolution determines the fair value of the option today. For a European option, only the distribution of $S_T$ matters, because the option can be exercised only once.
+
+# Put-call parity
+
+A no-arbitrage relationship links the prices of European calls and puts on the same underlying with the same strike and expiration.
+
+<Statement {...putCallParity} />
+
+<Proof>
+
+Compare two portfolios. Portfolio A holds one call and cash of $K e^{-rT}$, which grows to $K$ at time $T$. Portfolio B holds one put and one unit of the underlying. At expiration, portfolio A is worth $S_T$ if $S_T > K$, since the call is exercised with the cash, and $K$ otherwise, since the cash is kept. Portfolio B is worth $S_T$ if $S_T \geq K$, since the put expires worthless, and $K$ otherwise, since the put is exercised. Both portfolios therefore pay $\max(S_T, K)$ in every state of the world, and because neither can be exercised before $T$, they must cost the same today: if one were cheaper, buying it and selling the other would yield a profit with no risk. Hence $C + K e^{-rT} = P + S_0$, which rearranges to [](eq:put-call-parity).
+
+</Proof>
+
+Put-call parity means that the price of a European call determines the price of the corresponding European put, and conversely, so pricing one of the two prices both. With $S_0 = \$100$, $K = \$105$, $T = 0.5$ years and $r = 5\%$, the right-hand side of [](eq:put-call-parity) is $100 - 105 e^{-0.025} \approx -2.41$: whatever the call costs, the put must cost $\$2.41$ more. The relationship is also independent of any model of how $S_t$ moves, since the argument used only the two payoffs and the absence of arbitrage.
+
+# Exercise only at expiration
+
+The restriction to exercise at expiration turns the pricing of a European option into a question about the distribution of $S_T$ alone. There is no need to consider whether early exercise might be optimal, as there is for American options: a deep in-the-money American put on a non-dividend-paying stock, for example, is worth more exercised early than held to expiration. This is what permits closed-form prices for European options, the best known being that of the [Black-Scholes model](../black-scholes-model/). For American options no such formula exists in general, and pricing requires numerical methods such as binomial trees or finite-difference schemes.
