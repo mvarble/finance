@@ -18,6 +18,3 @@ differently from mesearch's conventions. For example:
 - The reader is comfortable with undergraduate real analysis.
 - Write probability measures as \PP and expectations as \EE.
 -->
-
-- Plotly is installed here as `plotly.js`, not as the `plotly.js-dist-min` of mesearch's examples, and the existing plots load its prebuilt bundle with `import('plotly.js/dist/plotly-cartesian.min.js')`.
-- Write a dollar amount in prose as `\$100`, or inside mathematics as `$\$100$`. A bare `$100` in a paragraph that also holds inline mathematics is read as a math delimiter and breaks the paragraph.

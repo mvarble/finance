@@ -2,4 +2,4 @@ allowBuilds:
   es5-ext: true
 minimumReleaseAgeExclude:
   - '@mvarble/mesearch-ui@0.2.0'
-  - '@mvarble/mesearch@0.2.3'
+  - '@mvarble/mesearch@0.2.3 || 0.2.4'
